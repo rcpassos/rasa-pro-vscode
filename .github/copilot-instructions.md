@@ -18,9 +18,11 @@ This is a VS Code extension that provides an integrated development experience f
 ### Key Dependencies (to be added)
 
 - `js-yaml` - YAML parsing and validation
-- `fast-glob` - File system scanning
-- `child_process` - Rasa CLI integration
+- `fast-glob` - File system scanning (for initial project scan)
+- `child_process` - Rasa CLI integration (Node.js built-in)
 - `vscode-languageclient` - Optional LSP support
+
+**Note:** Use VS Code's built-in `createFileSystemWatcher` for file watching, NOT Chokidar
 
 ### File Structure
 
@@ -296,10 +298,23 @@ export class RasaProjectService {
 
 ### File Watching
 
+**Use VS Code's built-in file watcher (NOT Chokidar):**
+
 ```typescript
 const watcher = vscode.workspace.createFileSystemWatcher("**/*.{yml,yaml}");
 watcher.onDidChange((uri) => rasaProject.refreshFile(uri));
+watcher.onDidCreate((uri) => rasaProject.addFile(uri));
+watcher.onDidDelete((uri) => rasaProject.removeFile(uri));
+
+// Always dispose in deactivate()
+context.subscriptions.push(watcher);
 ```
+
+**Why not Chokidar?**
+
+- VS Code API is native, lighter, and workspace-aware
+- Chokidar adds unnecessary bundle size
+- Only use Chokidar if watching files outside workspace
 
 ### CLI Command Pattern
 
