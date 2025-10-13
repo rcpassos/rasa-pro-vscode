@@ -150,6 +150,22 @@ forms:
 - Use VS Code API patterns consistently
 - Follow extension naming conventions (`rasa-pro-vscode.commandName`)
 
+### Code Quality Checks
+
+**IMPORTANT:** Always run `npm run check:quick` at the end of every code change to verify:
+
+- ✅ TypeScript compilation with strict mode
+- ✅ ESLint rules enforcement
+- ✅ No type errors
+- ✅ No linting issues
+
+Available check scripts:
+
+- `npm run check` - Full check (compiles to `./out` + lints) - Use before commits
+- `npm run check:quick` - Quick check (type-checks without emitting + lints) - Use during development
+
+**Never commit code without running checks first!**
+
 ### Error Handling
 
 - Gracefully handle missing Rasa files
