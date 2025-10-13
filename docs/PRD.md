@@ -2,7 +2,7 @@
 
 **Product Name:** Rasa Pro VS Code Extension  
 **Version:** 1.0 (MVP)  
-**Owner:** rcpassos
+**Owner:** rcpassos  
 **Date:** 2025-10-13
 
 ---
@@ -81,8 +81,15 @@ Reduce context-switching and manual debugging for Rasa developers by integrating
      - Custom action boilerplate
 
 5. **Rasa Project Explorer Sidebar**
+
    - Tree view listing intents, entities, slots, responses, and actions.
    - Click to navigate to source definition.
+
+6. **Extension Configuration Settings**
+   - `rasa-pro-vscode.rasaExecutable` - Path to Rasa CLI
+   - `rasa-pro-vscode.projectRoot` - Root directory for Rasa project
+   - `rasa-pro-vscode.enableDiagnostics` - Toggle validation
+   - `rasa-pro-vscode.maxFileSize` - Limit for parsing large files
 
 ---
 
@@ -119,6 +126,8 @@ Reduce context-switching and manual debugging for Rasa developers by integrating
 | **Supported OS**            | Windows, macOS, Linux                                                                     |
 | **Minimum Rasa Version**    | Rasa Open Source 3.x+, Rasa Pro compatible                                                |
 | **Testing**                 | VS Code integration tests via `@vscode/test-electron`, Mocha unit tests                   |
+| **Activation Events**       | `onLanguage:yaml`, `workspaceContains:**/domain.yml`, `workspaceContains:**/config.yml`   |
+| **Code Coverage Target**    | Minimum 80% for core services, 70% overall                                                |
 
 ---
 
@@ -177,10 +186,14 @@ Reduce context-switching and manual debugging for Rasa developers by integrating
 ## 11. 🧰 Future Enhancements (Post-MVP)
 
 - AI-powered story and response generation.
-- NLU data visualization and balancing tools.
-- Integrated NLU testing console.
+- NLU data visualization and balancing tools (intent distribution, entity coverage).
+- Integrated NLU testing console with inline predictions.
 - Rasa X / Pro server synchronization.
 - Team collaboration features (e.g., shared annotations).
+- Form validation and slot mapping helpers.
+- Interactive conversation flow diagrams.
+- Performance profiling for custom actions.
+- Multi-language NLU support helpers.
 
 ---
 

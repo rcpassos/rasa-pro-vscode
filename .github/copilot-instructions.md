@@ -74,31 +74,70 @@ src/
 
 ### Key File Types to Support
 
-- `domain.yml` - Core domain configuration
-- `nlu.yml` - Training data and intents
-- `stories.yml` - Conversation flows
-- `rules.yml` - Deterministic conversation rules
+- `domain.yml` / `domain/` - Core domain configuration (can be split into multiple files)
+- `nlu.yml` / `data/nlu/` - Training data and intents
+- `stories.yml` / `data/stories/` - Conversation flows
+- `rules.yml` / `data/rules/` - Deterministic conversation rules
 - `config.yml` - Pipeline configuration
-- `actions.py` - Custom Python actions
-- `endpoints.yml` - External service configurations
+- `actions/actions.py` - Custom Python actions
+- `endpoints.yml` - External service connections (action server, tracker store, etc.)
+- `credentials.yml` - Messaging channel credentials
+- `tests/` - Test conversation files
 
 ### Domain Schema Structure
 
 ```yaml
+version: "3.1"
+
 intents:
   - greet
   - goodbye
+  - inform
+
 entities:
   - name
+  - location
+
 slots:
   name:
     type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+  location:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: location
+
 responses:
   utter_greet:
-    - text: "Hello!"
+    - text: "Hello! How can I help you?"
+    - text: "Hi there!"
+  utter_goodbye:
+    - text: "Bye!"
+
 actions:
   - action_custom
+  - utter_greet
+  - utter_goodbye
+
+forms:
+  reservation_form:
+    required_slots:
+      - name
+      - location
 ```
+
+### Slot Types to Support
+
+- `text` - Stores text values
+- `bool` - Stores true/false
+- `categorical` - Stores values from a predefined list
+- `float` - Stores numerical values
+- `list` - Stores lists of values
+- `any` - Stores any value
 
 ## 🔧 Development Guidelines
 
@@ -128,7 +167,10 @@ actions:
 - Unit tests for YAML parsing logic
 - Integration tests for VS Code API interactions
 - Mock Rasa CLI commands in tests
-- Test with various Rasa project structures
+- Test with various Rasa project structures (flat, nested, split files)
+- **Target Code Coverage**: Minimum 80% for core services, 70% overall
+- Test edge cases: malformed YAML, missing files, large projects
+- Performance benchmarks for completion and parsing
 
 ## 🚀 Implementation Phases
 
@@ -168,12 +210,54 @@ actions:
 
 ```typescript
 export async function activate(context: vscode.ExtensionContext) {
+  // Log activation
+  console.log("Rasa Pro extension is activating...");
+
   const rasaProject = new RasaProjectService();
   await rasaProject.initialize();
 
   // Register providers only if Rasa project detected
   if (rasaProject.isRasaProject()) {
     registerProviders(context, rasaProject);
+    vscode.window.showInformationMessage("Rasa project detected!");
+  }
+}
+```
+
+**Activation Events (package.json):**
+
+```json
+{
+  "activationEvents": [
+    "onLanguage:yaml",
+    "workspaceContains:**/domain.yml",
+    "workspaceContains:**/config.yml",
+    "onCommand:rasa-pro-vscode.trainModel"
+  ]
+}
+```
+
+### Project Detection Logic
+
+```typescript
+export class RasaProjectService {
+  async isRasaProject(): Promise<boolean> {
+    // Check for required Rasa files
+    const requiredFiles = ["domain.yml", "config.yml"];
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+
+    if (!workspaceRoot) return false;
+
+    for (const file of requiredFiles) {
+      const files = await vscode.workspace.findFiles(
+        `**/${file}`,
+        "**/node_modules/**",
+        1
+      );
+      if (files.length === 0) return false;
+    }
+
+    return true;
   }
 }
 ```
@@ -183,6 +267,32 @@ export async function activate(context: vscode.ExtensionContext) {
 - Use VS Code workspace settings for Rasa-specific configs
 - Support both global and project-level settings
 - Default to Rasa standard conventions
+
+**Extension Configuration Schema:**
+
+```json
+{
+  "rasa-pro-vscode.rasaExecutable": {
+    "type": "string",
+    "default": "rasa",
+    "description": "Path to Rasa CLI executable"
+  },
+  "rasa-pro-vscode.projectRoot": {
+    "type": "string",
+    "description": "Root directory of Rasa project (auto-detected if not specified)"
+  },
+  "rasa-pro-vscode.enableDiagnostics": {
+    "type": "boolean",
+    "default": true,
+    "description": "Enable real-time validation and diagnostics"
+  },
+  "rasa-pro-vscode.maxFileSize": {
+    "type": "number",
+    "default": 1048576,
+    "description": "Maximum file size (in bytes) for parsing (default: 1MB)"
+  }
+}
+```
 
 ### File Watching
 
@@ -227,6 +337,20 @@ vscode.commands.registerCommand("rasa-pro-vscode.trainModel", async () => {
 - Validate custom actions exist in `actions.py`
 - Support action server endpoint validation
 
+### Forms and Slot Mappings
+
+- Validate required_slots reference existing slots
+- Support form validation rules
+- Auto-complete slot mapping types: `from_entity`, `from_text`, `from_intent`, `custom`
+- Validate form activation conditions
+
+### Stories and Rules
+
+- Validate checkpoint references
+- Support OR statements in stories
+- Validate slot_was_set conditions
+- Support active_loop for form handling
+
 ## 🚫 Out of Scope (Don't Implement in MVP)
 
 - AI-powered story generation
@@ -243,6 +367,50 @@ vscode.commands.registerCommand("rasa-pro-vscode.trainModel", async () => {
 - Support projects with 100+ YAML files
 - Zero VS Code crashes from extension
 
+## ⚠️ Common Pitfalls to Avoid
+
+### Performance Issues
+
+- **Don't** parse all YAML files synchronously on activation
+- **Don't** block the main thread with heavy operations
+- **Do** use debouncing for file watcher events
+- **Do** implement incremental parsing for large files
+
+### YAML Parsing
+
+- **Don't** assume YAML is always valid
+- **Don't** crash on circular references in domain files
+- **Do** handle split domain files across multiple directories
+- **Do** support both `domain.yml` and `domain/` folder structures
+
+### Extension Lifecycle
+
+- **Don't** activate unless it's a Rasa project
+- **Don't** register global event handlers without cleanup
+- **Do** dispose of resources in `deactivate()`
+- **Do** handle workspace folder changes gracefully
+
+### CLI Integration
+
+- **Don't** assume `rasa` is in PATH
+- **Don't** run CLI commands without user feedback
+- **Do** validate Rasa installation before running commands
+- **Do** provide clear error messages when CLI fails
+
+## 📦 Package.json Configuration
+
+**Categories:** Use appropriate VS Code marketplace categories:
+
+```json
+{
+  "categories": ["Programming Languages", "Linters", "Snippets", "Other"]
+}
+```
+
+**Keywords for discoverability:**
+
+- `rasa`, `rasa-pro`, `conversational-ai`, `chatbot`, `nlu`, `dialogue`, `yaml`, `assistant`
+
 ## 🔗 Key Resources
 
 - [VS Code Extension API](https://code.visualstudio.com/api)
@@ -250,4 +418,16 @@ vscode.commands.registerCommand("rasa-pro-vscode.trainModel", async () => {
 - [Rasa Domain Format](https://rasa.com/docs/rasa/domain)
 - [YAML Schema Validation](https://www.npmjs.com/package/js-yaml)
 
-Remember: Focus on developer productivity, maintain excellent performance, and provide a seamless integration with existing Rasa workflows.
+---
+
+## 🎓 Remember
+
+**Focus on developer productivity, maintain excellent performance, and provide a seamless integration with existing Rasa workflows.**
+
+When implementing features:
+
+1. Start with the happy path, then handle edge cases
+2. Prioritize user feedback and error messages
+3. Test with real Rasa projects of varying sizes
+4. Keep the extension lightweight and fast
+5. Document complex logic with clear comments
