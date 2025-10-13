@@ -15,7 +15,7 @@
 
 ### Core Services
 
-- [ ] Create `src/services/rasaProjectService.ts` - Project detection logic
+- [x] Create `src/services/rasaProjectService.ts` - Project detection logic
 - [ ] Create `src/services/yamlParserService.ts` - YAML parsing with js-yaml
 - [ ] Implement file watcher using `vscode.workspace.createFileSystemWatcher()` (NOT Chokidar)
 - [ ] Test project detection with sample Rasa projects
