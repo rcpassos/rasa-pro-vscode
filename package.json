@@ -89,6 +89,7 @@
     "check:quick": "tsc --noEmit && npm run lint"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
     "@types/vscode": "^1.105.0",
