@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import { RasaProjectService } from "./services/rasaProjectService";
 import { RasaCompletionProvider } from "./providers/completionProvider";
+import { RasaDiagnosticProvider } from "./providers/diagnosticProvider";
 
 // Global reference to the Rasa project service
 let rasaProjectService: RasaProjectService | undefined;
@@ -38,7 +39,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
     console.log("Rasa completion provider registered");
 
-    // TODO: Register diagnostic provider
+    // Register diagnostic provider
+    const diagnosticProvider = new RasaDiagnosticProvider(rasaProjectService);
+    context.subscriptions.push(diagnosticProvider);
+    console.log("Rasa diagnostic provider registered");
+
     // TODO: Register hover provider
     // TODO: Register commands
 
