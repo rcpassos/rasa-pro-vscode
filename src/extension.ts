@@ -1,26 +1,57 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
+import { RasaProjectService } from "./services/rasaProjectService";
+
+// Global reference to the Rasa project service
+let rasaProjectService: RasaProjectService | undefined;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
+  console.log("Rasa Pro extension is activating...");
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "rasa-pro-vscode" is now active!');
+  // Initialize the Rasa project service
+  rasaProjectService = new RasaProjectService();
+  await rasaProjectService.initialize();
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('rasa-pro-vscode.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from rasa-pro-vscode!');
-	});
+  // Register the service for disposal
+  context.subscriptions.push(rasaProjectService);
 
-	context.subscriptions.push(disposable);
+  // Register providers only if a Rasa project was detected
+  if (rasaProjectService.isRasaProject()) {
+    vscode.window.showInformationMessage("Rasa project detected!");
+
+    // TODO: Register completion provider
+    // TODO: Register diagnostic provider
+    // TODO: Register hover provider
+    // TODO: Register commands
+
+    console.log("Rasa Pro extension activated successfully");
+  } else {
+    console.log("No Rasa project detected in workspace");
+  }
+
+  // Register a test command for now
+  const disposable = vscode.commands.registerCommand(
+    "rasa-pro-vscode.helloWorld",
+    () => {
+      if (rasaProjectService?.isRasaProject()) {
+        const fileCount = rasaProjectService.getProjectFiles().size;
+        vscode.window.showInformationMessage(
+          `Rasa Pro extension active! Found ${fileCount} Rasa files.`
+        );
+      } else {
+        vscode.window.showInformationMessage("Hello from Rasa Pro extension!");
+      }
+    }
+  );
+
+  context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  // Cleanup is handled automatically via context.subscriptions
+  rasaProjectService = undefined;
+}
