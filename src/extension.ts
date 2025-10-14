@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { RasaProjectService } from "./services/rasaProjectService";
+import { RasaCompletionProvider } from "./providers/completionProvider";
 
 // Global reference to the Rasa project service
 let rasaProjectService: RasaProjectService | undefined;
@@ -22,7 +23,21 @@ export async function activate(context: vscode.ExtensionContext) {
   if (rasaProjectService.isRasaProject()) {
     vscode.window.showInformationMessage("Rasa project detected!");
 
-    // TODO: Register completion provider
+    // Register completion provider for YAML files
+    const completionProvider = new RasaCompletionProvider(rasaProjectService);
+    const completionDisposable =
+      vscode.languages.registerCompletionItemProvider(
+        { language: "yaml", pattern: "**/*.{yml,yaml}" },
+        completionProvider,
+        ":", // Trigger on colon
+        "-", // Trigger on dash (for list items)
+        " " // Trigger on space
+      );
+    context.subscriptions.push(completionDisposable);
+    context.subscriptions.push(completionProvider);
+
+    console.log("Rasa completion provider registered");
+
     // TODO: Register diagnostic provider
     // TODO: Register hover provider
     // TODO: Register commands

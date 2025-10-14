@@ -26,12 +26,12 @@
 
 ### Completion Provider
 
-- [ ] Create `src/providers/completionProvider.ts`
-- [ ] Implement intent autocomplete
-- [ ] Implement entity autocomplete
-- [ ] Implement slot autocomplete
-- [ ] Implement action autocomplete
-- [ ] Implement response (`utter_*`) autocomplete
+- [x] Create `src/providers/completionProvider.ts`
+- [x] Implement intent autocomplete
+- [x] Implement entity autocomplete
+- [x] Implement slot autocomplete
+- [x] Implement action autocomplete
+- [x] Implement response (`utter_*`) autocomplete
 
 ### Diagnostic Provider
 

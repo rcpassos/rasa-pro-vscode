@@ -37,3 +37,7 @@ stories:
       - active_loop: null
       - action: action_check_weather
       - action: utter_goodbye
+
+  - story: test completion
+    steps:
+      - action: utter_happy
