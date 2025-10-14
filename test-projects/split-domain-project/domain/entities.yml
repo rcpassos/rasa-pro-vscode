@@ -1,0 +1,6 @@
+version: "3.1"
+
+entities:
+  - city
+  - date
+  - flight_number

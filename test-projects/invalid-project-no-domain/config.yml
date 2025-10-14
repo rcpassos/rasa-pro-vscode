@@ -1,0 +1,9 @@
+recipe: default.v1
+language: en
+
+pipeline:
+  - name: WhitespaceTokenizer
+  - name: DIETClassifier
+
+policies:
+  - name: TEDPolicy

@@ -1,0 +1,17 @@
+version: "3.1"
+
+responses:
+  utter_greet:
+    - text: "Hello! Welcome to our flight booking service."
+
+  utter_goodbye:
+    - text: "Thank you for using our service. Have a great day!"
+
+  utter_ask_departure_city:
+    - text: "Which city are you departing from?"
+
+  utter_ask_arrival_city:
+    - text: "Which city would you like to fly to?"
+
+  utter_ask_travel_date:
+    - text: "When would you like to travel?"

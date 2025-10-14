@@ -1,0 +1,10 @@
+version: "3.1"
+
+actions:
+  - utter_greet
+  - utter_goodbye
+  - utter_ask_departure_city
+  - utter_ask_arrival_city
+  - utter_ask_travel_date
+  - action_book_flight
+  - action_check_flight_status

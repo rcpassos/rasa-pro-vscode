@@ -1,0 +1,76 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - bot_challenge
+
+entities:
+  - name
+  - location
+
+slots:
+  name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: reservation_form
+            requested_slot: name
+
+  location:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: location
+
+responses:
+  utter_greet:
+    - text: "Hey! How are you?"
+    - text: "Hello! How can I help you?"
+
+  utter_cheer_up:
+    - text: "Here is something to cheer you up:"
+      image: "https://i.imgur.com/nGF1K8f.jpg"
+
+  utter_did_that_help:
+    - text: "Did that help you?"
+
+  utter_happy:
+    - text: "Great, carry on!"
+
+  utter_goodbye:
+    - text: "Bye"
+    - text: "See you later!"
+
+  utter_iamabot:
+    - text: "I am a bot, powered by Rasa."
+
+  utter_ask_name:
+    - text: "What is your name?"
+
+  utter_ask_location:
+    - text: "Where are you located?"
+
+actions:
+  - utter_greet
+  - utter_cheer_up
+  - utter_did_that_help
+  - utter_happy
+  - utter_goodbye
+  - utter_iamabot
+  - utter_ask_name
+  - utter_ask_location
+  - action_check_weather
+
+forms:
+  reservation_form:
+    required_slots:
+      - name
+      - location
