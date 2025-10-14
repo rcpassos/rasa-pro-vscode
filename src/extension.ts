@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 import { RasaProjectService } from "./services/rasaProjectService";
 import { RasaCompletionProvider } from "./providers/completionProvider";
 import { RasaDiagnosticProvider } from "./providers/diagnosticProvider";
+import { RasaHoverProvider } from "./providers/hoverProvider";
 
 // Global reference to the Rasa project service
 let rasaProjectService: RasaProjectService | undefined;
@@ -44,7 +45,16 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(diagnosticProvider);
     console.log("Rasa diagnostic provider registered");
 
-    // TODO: Register hover provider
+    // Register hover provider
+    const hoverProvider = new RasaHoverProvider(rasaProjectService);
+    const hoverDisposable = vscode.languages.registerHoverProvider(
+      { language: "yaml", pattern: "**/*.{yml,yaml}" },
+      hoverProvider
+    );
+    context.subscriptions.push(hoverDisposable);
+    context.subscriptions.push(hoverProvider);
+    console.log("Rasa hover provider registered");
+
     // TODO: Register commands
 
     console.log("Rasa Pro extension activated successfully");

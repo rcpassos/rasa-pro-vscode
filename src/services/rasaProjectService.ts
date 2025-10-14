@@ -376,6 +376,34 @@ export class RasaProjectService {
   }
 
   /**
+   * Gets all domain files (domain.yml or domain/*.yml).
+   */
+  getDomainFiles(): vscode.Uri[] {
+    return this.getFilesByType("domain");
+  }
+
+  /**
+   * Gets all NLU files.
+   */
+  getNLUFiles(): vscode.Uri[] {
+    return this.getFilesByType("nlu");
+  }
+
+  /**
+   * Gets all stories files.
+   */
+  getStoriesFiles(): vscode.Uri[] {
+    return this.getFilesByType("stories");
+  }
+
+  /**
+   * Gets all rules files.
+   */
+  getRulesFiles(): vscode.Uri[] {
+    return this.getFilesByType("rules");
+  }
+
+  /**
    * Gets the Rasa executable path from configuration or defaults to 'rasa'.
    */
   getRasaExecutable(): string {

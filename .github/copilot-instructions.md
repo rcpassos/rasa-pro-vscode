@@ -152,19 +152,48 @@ forms:
 
 ### Code Quality Checks
 
-**IMPORTANT:** Always run `npm run check:quick` at the end of every code change to verify:
+**IMPORTANT:** Always run quality checks after every code change. Follow this workflow:
 
-- ✅ TypeScript compilation with strict mode
-- ✅ ESLint rules enforcement
-- ✅ No type errors
-- ✅ No linting issues
+**Development Workflow:**
+
+1. **During development** (after each code change):
+
+   ```bash
+   npm run check:quick  # Fast: Type-check + lint (~5s)
+   ```
+
+2. **After completing a feature**:
+
+   ```bash
+   npm test  # Run full test suite (~30s)
+   ```
+
+   - This catches regressions early
+   - Validates integration with existing code
+   - Documents expected behavior
+   - Saves debugging time later
+
+3. **Before committing**:
+   ```bash
+   npm run check  # Full compile + lint
+   npm test       # Verify all tests pass
+   ```
 
 Available check scripts:
 
 - `npm run check` - Full check (compiles to `./out` + lints) - Use before commits
 - `npm run check:quick` - Quick check (type-checks without emitting + lints) - Use during development
+- `npm test` - Run complete test suite with VS Code test runner
 
-**Never commit code without running checks first!**
+**Never commit code without running both checks and tests!**
+
+### Why Run Tests After Every Feature?
+
+1. **Catch Regressions Early** - Know immediately if new code breaks existing functionality
+2. **Validate Integration** - Ensure new features work with the rest of the system
+3. **Document Behavior** - Tests serve as living documentation
+4. **Save Time** - Finding bugs during development is easier than debugging production issues
+5. **Maintain Quality** - Keep code coverage high and bugs low
 
 ### Error Handling
 

@@ -42,9 +42,9 @@
 
 ### Hover Provider
 
-- [ ] Create `src/providers/hoverProvider.ts`
-- [ ] Show definitions on hover
-- [ ] Add navigation links to definitions
+- [x] Create `src/providers/hoverProvider.ts`
+- [x] Show definitions on hover
+- [x] Add navigation links to definitions
 
 ---
 
