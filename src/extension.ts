@@ -5,6 +5,8 @@ import { RasaProjectService } from "./services/rasaProjectService";
 import { RasaCompletionProvider } from "./providers/completionProvider";
 import { RasaDiagnosticProvider } from "./providers/diagnosticProvider";
 import { RasaHoverProvider } from "./providers/hoverProvider";
+import { CliIntegrationService } from "./services/cliIntegrationService";
+import { RasaOutputChannel } from "./views/outputChannel";
 
 // Global reference to the Rasa project service
 let rasaProjectService: RasaProjectService | undefined;
@@ -54,6 +56,62 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(hoverDisposable);
     context.subscriptions.push(hoverProvider);
     console.log("Rasa hover provider registered");
+
+    // Register CLI integration
+    const rasaOutputChannel = new RasaOutputChannel();
+    context.subscriptions.push(rasaOutputChannel);
+
+    const cliService = new CliIntegrationService(
+      rasaOutputChannel.getChannel()
+    );
+    context.subscriptions.push(cliService);
+
+    // Register CLI commands
+    context.subscriptions.push(
+      vscode.commands.registerCommand(
+        "rasa-pro-vscode.trainModel",
+        async () => {
+          await cliService.trainModel();
+        }
+      )
+    );
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand(
+        "rasa-pro-vscode.runActionServer",
+        async () => {
+          const port = await vscode.window.showInputBox({
+            prompt: "Enter port number for action server",
+            value: "5055",
+            validateInput: (value) => {
+              const num = parseInt(value, 10);
+              if (isNaN(num) || num < 1 || num > 65535) {
+                return "Please enter a valid port number (1-65535)";
+              }
+              return null;
+            },
+          });
+
+          if (port) {
+            await cliService.runActionServer(parseInt(port, 10));
+          }
+        }
+      )
+    );
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand("rasa-pro-vscode.openShell", async () => {
+        await cliService.openShell();
+      })
+    );
+
+    context.subscriptions.push(
+      vscode.commands.registerCommand("rasa-pro-vscode.runTests", async () => {
+        await cliService.runTests();
+      })
+    );
+
+    console.log("Rasa CLI commands registered");
 
     // TODO: Register commands
 

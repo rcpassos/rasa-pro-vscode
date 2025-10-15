@@ -74,18 +74,18 @@
 
 ### Command Palette Commands
 
-- [ ] Register command: `Rasa: Train Model`
-- [ ] Register command: `Rasa: Run Action Server`
-- [ ] Register command: `Rasa: Shell`
-- [ ] Register command: `Rasa: Test`
-- [ ] Validate Rasa installation before running commands
+- [x] Register command: `Rasa: Train Model`
+- [x] Register command: `Rasa: Run Action Server`
+- [x] Register command: `Rasa: Shell`
+- [x] Register command: `Rasa: Test`
+- [x] Validate Rasa installation before running commands
 
 ### Output Management
 
-- [ ] Create dedicated "Rasa Output" channel
-- [ ] Stream CLI output to output channel
-- [ ] Handle CLI errors gracefully
-- [ ] Add status bar indicators during operations
+- [x] Create dedicated "Rasa Output" channel
+- [x] Stream CLI output to output channel
+- [x] Handle CLI errors gracefully
+- [x] Add status bar indicators during operations
 
 ---
 
