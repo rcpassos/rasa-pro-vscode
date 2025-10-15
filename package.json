@@ -60,7 +60,8 @@
         {
           "id": "rasaExplorer",
           "name": "Project Components",
-          "when": "rasa-pro-vscode.rasaProjectDetected"
+          "when": "rasa-pro-vscode.rasaProjectDetected",
+          "icon": "$(list-tree)"
         }
       ]
     },
