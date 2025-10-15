@@ -117,8 +117,8 @@
 
 ### Testing
 
-- [ ] Write unit tests for `rasaProjectService`
-- [ ] Write unit tests for `yamlParserService`
+- [x] Write unit tests for `rasaProjectService`
+- [x] Write unit tests for `yamlParserService`
 - [ ] Write integration tests for completion provider
 - [ ] Write integration tests for diagnostics
 - [ ] Test with real Rasa projects (small, medium, large)
