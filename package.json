@@ -134,7 +134,17 @@
           "description": "Maximum file size (in bytes) for parsing (default: 1MB)"
         }
       }
-    }
+    },
+    "snippets": [
+      {
+        "language": "yaml",
+        "path": "./snippets/rasa-yaml.json"
+      },
+      {
+        "language": "python",
+        "path": "./snippets/rasa-python.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

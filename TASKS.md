@@ -104,12 +104,12 @@
 
 ### Snippets
 
-- [ ] Create YAML snippet: Intent example
-- [ ] Create YAML snippet: Story template
-- [ ] Create YAML snippet: Rule template
-- [ ] Create YAML snippet: Response template
-- [ ] Create Python snippet: Custom action boilerplate
-- [ ] Register snippets in `package.json`
+- [x] Create YAML snippet: Intent example
+- [x] Create YAML snippet: Story template
+- [x] Create YAML snippet: Rule template
+- [x] Create YAML snippet: Response template
+- [x] Create Python snippet: Custom action boilerplate
+- [x] Register snippets in `package.json`
 
 ---
 

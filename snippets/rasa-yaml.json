@@ -1,0 +1,363 @@
+{
+  "Intent Example": {
+    "prefix": "rasa-intent",
+    "body": [
+      "- intent: ${1:intent_name}",
+      "  examples: |",
+      "    - ${2:example text}",
+      "    - ${3:another example}",
+      "    - ${4:yet another example}"
+    ],
+    "description": "Create a Rasa NLU intent with examples"
+  },
+  "Intent with Entities": {
+    "prefix": "rasa-intent-entities",
+    "body": [
+      "- intent: ${1:intent_name}",
+      "  examples: |",
+      "    - I want to book a [${2:table}](${3:booking_type}) for [${4:4}](${5:number}) people",
+      "    - Reserve a [${2:table}](${3:booking_type}) for [${6:2}](${5:number}) guests",
+      "    - Book a [${7:room}](${3:booking_type}) for [${8:tonight}](${9:date})"
+    ],
+    "description": "Create a Rasa NLU intent with entity annotations"
+  },
+  "Story Template": {
+    "prefix": "rasa-story",
+    "body": [
+      "- story: ${1:story_name}",
+      "  steps:",
+      "    - intent: ${2:greet}",
+      "    - action: ${3:utter_greet}",
+      "    - intent: ${4:inform}",
+      "    - action: ${5:utter_acknowledge}",
+      "    $0"
+    ],
+    "description": "Create a Rasa story template"
+  },
+  "Story with Slot": {
+    "prefix": "rasa-story-slot",
+    "body": [
+      "- story: ${1:story_with_slot}",
+      "  steps:",
+      "    - intent: ${2:inform}",
+      "    - slot_was_set:",
+      "        - ${3:slot_name}: ${4:slot_value}",
+      "    - action: ${5:utter_response}",
+      "    $0"
+    ],
+    "description": "Create a Rasa story with slot conditions"
+  },
+  "Story with Checkpoint": {
+    "prefix": "rasa-story-checkpoint",
+    "body": [
+      "- story: ${1:story_name}",
+      "  steps:",
+      "    - checkpoint: ${2:checkpoint_name}",
+      "    - intent: ${3:intent_name}",
+      "    - action: ${4:action_name}",
+      "    $0"
+    ],
+    "description": "Create a Rasa story with checkpoint"
+  },
+  "Rule Template": {
+    "prefix": "rasa-rule",
+    "body": [
+      "- rule: ${1:rule_name}",
+      "  steps:",
+      "    - intent: ${2:intent_name}",
+      "    - action: ${3:action_name}",
+      "    $0"
+    ],
+    "description": "Create a Rasa rule template"
+  },
+  "Rule with Condition": {
+    "prefix": "rasa-rule-condition",
+    "body": [
+      "- rule: ${1:rule_name}",
+      "  condition:",
+      "    - slot_was_set:",
+      "        - ${2:slot_name}: ${3:slot_value}",
+      "  steps:",
+      "    - intent: ${4:intent_name}",
+      "    - action: ${5:action_name}",
+      "    $0"
+    ],
+    "description": "Create a Rasa rule with conditions"
+  },
+  "Rule Activate Form": {
+    "prefix": "rasa-rule-form-activate",
+    "body": [
+      "- rule: Activate ${1:form_name}",
+      "  steps:",
+      "    - intent: ${2:intent_name}",
+      "    - action: ${1:form_name}",
+      "    - active_loop: ${1:form_name}"
+    ],
+    "description": "Create a rule to activate a form"
+  },
+  "Rule Submit Form": {
+    "prefix": "rasa-rule-form-submit",
+    "body": [
+      "- rule: Submit ${1:form_name}",
+      "  condition:",
+      "    - active_loop: ${1:form_name}",
+      "  steps:",
+      "    - action: ${1:form_name}",
+      "    - active_loop: null",
+      "    - slot_was_set:",
+      "        - requested_slot: null",
+      "    - action: ${2:utter_submit}"
+    ],
+    "description": "Create a rule to submit a form"
+  },
+  "Response Template": {
+    "prefix": "rasa-response",
+    "body": [
+      "utter_${1:response_name}:",
+      "  - text: \"${2:Response text here}\"",
+      "  $0"
+    ],
+    "description": "Create a Rasa response template"
+  },
+  "Response with Variations": {
+    "prefix": "rasa-response-variations",
+    "body": [
+      "utter_${1:response_name}:",
+      "  - text: \"${2:First variation}\"",
+      "  - text: \"${3:Second variation}\"",
+      "  - text: \"${4:Third variation}\"",
+      "  $0"
+    ],
+    "description": "Create a Rasa response with multiple variations"
+  },
+  "Response with Buttons": {
+    "prefix": "rasa-response-buttons",
+    "body": [
+      "utter_${1:response_name}:",
+      "  - text: \"${2:Choose an option:}\"",
+      "    buttons:",
+      "      - title: \"${3:Button 1}\"",
+      "        payload: \"/${4:intent_1}\"",
+      "      - title: \"${5:Button 2}\"",
+      "        payload: \"/${6:intent_2}\"",
+      "    $0"
+    ],
+    "description": "Create a Rasa response with buttons"
+  },
+  "Response with Image": {
+    "prefix": "rasa-response-image",
+    "body": [
+      "utter_${1:response_name}:",
+      "  - text: \"${2:Response text}\"",
+      "    image: \"${3:https://example.com/image.png}\"",
+      "  $0"
+    ],
+    "description": "Create a Rasa response with an image"
+  },
+  "Response with Custom Payload": {
+    "prefix": "rasa-response-custom",
+    "body": [
+      "utter_${1:response_name}:",
+      "  - text: \"${2:Response text}\"",
+      "    custom:",
+      "      ${3:key}: \"${4:value}\"",
+      "  $0"
+    ],
+    "description": "Create a Rasa response with custom payload"
+  },
+  "Domain Slot - Text": {
+    "prefix": "rasa-slot-text",
+    "body": [
+      "${1:slot_name}:",
+      "  type: text",
+      "  influence_conversation: ${2|true,false|}",
+      "  mappings:",
+      "    - type: ${3|from_text,from_entity,from_intent,custom|}",
+      "  $0"
+    ],
+    "description": "Create a text slot in domain"
+  },
+  "Domain Slot - Categorical": {
+    "prefix": "rasa-slot-categorical",
+    "body": [
+      "${1:slot_name}:",
+      "  type: categorical",
+      "  values:",
+      "    - ${2:value1}",
+      "    - ${3:value2}",
+      "    - ${4:value3}",
+      "  influence_conversation: ${5|true,false|}",
+      "  mappings:",
+      "    - type: ${6|from_entity,from_intent,custom|}",
+      "  $0"
+    ],
+    "description": "Create a categorical slot in domain"
+  },
+  "Domain Slot - Boolean": {
+    "prefix": "rasa-slot-bool",
+    "body": [
+      "${1:slot_name}:",
+      "  type: bool",
+      "  influence_conversation: ${2|true,false|}",
+      "  mappings:",
+      "    - type: ${3|from_intent,from_entity,custom|}",
+      "  $0"
+    ],
+    "description": "Create a boolean slot in domain"
+  },
+  "Domain Slot - Float": {
+    "prefix": "rasa-slot-float",
+    "body": [
+      "${1:slot_name}:",
+      "  type: float",
+      "  min_value: ${2:0.0}",
+      "  max_value: ${3:1.0}",
+      "  influence_conversation: ${4|true,false|}",
+      "  mappings:",
+      "    - type: ${5|from_entity,custom|}",
+      "      entity: ${6:entity_name}",
+      "  $0"
+    ],
+    "description": "Create a float slot in domain"
+  },
+  "Domain Slot - List": {
+    "prefix": "rasa-slot-list",
+    "body": [
+      "${1:slot_name}:",
+      "  type: list",
+      "  influence_conversation: ${2|true,false|}",
+      "  mappings:",
+      "    - type: ${3|from_entity,custom|}",
+      "  $0"
+    ],
+    "description": "Create a list slot in domain"
+  },
+  "Domain Form": {
+    "prefix": "rasa-form",
+    "body": [
+      "${1:form_name}:",
+      "  required_slots:",
+      "    - ${2:slot1}",
+      "    - ${3:slot2}",
+      "  $0"
+    ],
+    "description": "Create a form in domain"
+  },
+  "Domain Form with Ignore Intent": {
+    "prefix": "rasa-form-ignore",
+    "body": [
+      "${1:form_name}:",
+      "  ignored_intents:",
+      "    - ${2:chitchat}",
+      "    - ${3:faq}",
+      "  required_slots:",
+      "    - ${4:slot1}",
+      "    - ${5:slot2}",
+      "  $0"
+    ],
+    "description": "Create a form with ignored intents"
+  },
+  "Entity with Synonyms": {
+    "prefix": "rasa-entity-synonyms",
+    "body": [
+      "- synonym: ${1:synonym_value}",
+      "  examples: |",
+      "    - ${2:variation1}",
+      "    - ${3:variation2}",
+      "    - ${4:variation3}",
+      "  $0"
+    ],
+    "description": "Create entity synonyms"
+  },
+  "Entity with Lookup Table": {
+    "prefix": "rasa-entity-lookup",
+    "body": [
+      "- lookup: ${1:entity_name}",
+      "  examples: |",
+      "    - ${2:value1}",
+      "    - ${3:value2}",
+      "    - ${4:value3}",
+      "  $0"
+    ],
+    "description": "Create entity lookup table"
+  },
+  "Regex Pattern": {
+    "prefix": "rasa-regex",
+    "body": [
+      "- regex: ${1:pattern_name}",
+      "  examples: |",
+      "    - ${2:\\\\d{3}-\\\\d{3}-\\\\d{4}}",
+      "  $0"
+    ],
+    "description": "Create a regex pattern for entity extraction"
+  },
+  "Domain Config": {
+    "prefix": "rasa-domain",
+    "body": [
+      "version: \"${1:3.1}\"",
+      "",
+      "intents:",
+      "  - ${2:greet}",
+      "  - ${3:goodbye}",
+      "",
+      "entities:",
+      "  - ${4:name}",
+      "",
+      "slots:",
+      "  ${4:name}:",
+      "    type: text",
+      "    influence_conversation: false",
+      "    mappings:",
+      "      - type: from_entity",
+      "        entity: ${4:name}",
+      "",
+      "responses:",
+      "  utter_${2:greet}:",
+      "    - text: \"Hello!\"",
+      "",
+      "actions:",
+      "  - ${5:action_custom}",
+      "",
+      "session_config:",
+      "  session_expiration_time: ${6:60}",
+      "  carry_over_slots_to_new_session: ${7|true,false|}",
+      "$0"
+    ],
+    "description": "Create a complete domain.yml template"
+  },
+  "Config Pipeline": {
+    "prefix": "rasa-config",
+    "body": [
+      "version: \"${1:3.1}\"",
+      "",
+      "language: ${2:en}",
+      "",
+      "pipeline:",
+      "  - name: WhitespaceTokenizer",
+      "  - name: RegexFeaturizer",
+      "  - name: LexicalSyntacticFeaturizer",
+      "  - name: CountVectorsFeaturizer",
+      "  - name: CountVectorsFeaturizer",
+      "    analyzer: char_wb",
+      "    min_ngram: 1",
+      "    max_ngram: 4",
+      "  - name: DIETClassifier",
+      "    epochs: ${3:100}",
+      "  - name: EntitySynonymMapper",
+      "  - name: ResponseSelector",
+      "    epochs: ${3:100}",
+      "",
+      "policies:",
+      "  - name: MemoizationPolicy",
+      "  - name: RulePolicy",
+      "  - name: UnexpecTEDIntentPolicy",
+      "    max_history: ${4:5}",
+      "    epochs: ${3:100}",
+      "  - name: TEDPolicy",
+      "    max_history: ${4:5}",
+      "    epochs: ${3:100}",
+      "$0"
+    ],
+    "description": "Create a complete config.yml template"
+  }
+}
