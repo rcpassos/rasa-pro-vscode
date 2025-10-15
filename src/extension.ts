@@ -1,5 +1,3 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { RasaProjectService } from "./services/rasaProjectService";
 import { RasaCompletionProvider } from "./providers/completionProvider";
@@ -7,6 +5,7 @@ import { RasaDiagnosticProvider } from "./providers/diagnosticProvider";
 import { RasaHoverProvider } from "./providers/hoverProvider";
 import { CliIntegrationService } from "./services/cliIntegrationService";
 import { RasaOutputChannel } from "./views/outputChannel";
+import { RasaExplorerView } from "./views/explorerView";
 
 // Global reference to the Rasa project service
 let rasaProjectService: RasaProjectService | undefined;
@@ -56,6 +55,10 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(hoverDisposable);
     context.subscriptions.push(hoverProvider);
     console.log("Rasa hover provider registered");
+
+    // Register Project Explorer View
+    new RasaExplorerView(context, rasaProjectService);
+    console.log("Rasa Project Explorer registered");
 
     // Register CLI integration
     const rasaOutputChannel = new RasaOutputChannel();

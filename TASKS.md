@@ -93,13 +93,14 @@
 
 ### Project Explorer
 
-- [ ] Create `src/views/explorerView.ts`
-- [ ] Build tree view for intents
-- [ ] Build tree view for entities
-- [ ] Build tree view for slots
-- [ ] Build tree view for responses
-- [ ] Build tree view for actions
-- [ ] Implement click-to-navigate functionality
+- [x] Create `src/views/explorerView.ts`
+- [x] Build tree view for intents
+- [x] Build tree view for entities
+- [x] Build tree view for slots
+- [x] Build tree view for responses
+- [x] Build tree view for actions
+- [x] Build tree view for forms
+- [x] Implement click-to-navigate functionality
 
 ### Snippets
 

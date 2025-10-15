@@ -46,6 +46,24 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "rasa-explorer",
+          "title": "Rasa",
+          "icon": "$(comment-discussion)"
+        }
+      ]
+    },
+    "views": {
+      "rasa-explorer": [
+        {
+          "id": "rasaExplorer",
+          "name": "Project Components",
+          "when": "rasa-pro-vscode.rasaProjectDetected"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "rasa-pro-vscode.helloWorld",
@@ -75,8 +93,23 @@
         "title": "Rasa: Run Tests",
         "category": "Rasa",
         "icon": "$(beaker)"
+      },
+      {
+        "command": "rasa-pro-vscode.refreshExplorer",
+        "title": "Refresh",
+        "category": "Rasa",
+        "icon": "$(refresh)"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "rasa-pro-vscode.refreshExplorer",
+          "when": "view == rasaExplorer",
+          "group": "navigation"
+        }
+      ]
+    },
     "configuration": {
       "title": "Rasa Pro",
       "properties": {
