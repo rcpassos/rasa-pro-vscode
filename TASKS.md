@@ -142,7 +142,7 @@
 
 ## 🎯 Quick Wins (Can be done anytime)
 
-- [ ] Add extension icon
+- [x] Add extension icon
 - [ ] Set up GitHub Actions for CI/CD
 - [ ] Add ESLint rules enforcement
 - [ ] Add Prettier for code formatting
