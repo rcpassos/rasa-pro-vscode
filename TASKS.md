@@ -119,9 +119,8 @@
 
 - [x] Write unit tests for `rasaProjectService`
 - [x] Write unit tests for `yamlParserService`
-- [ ] Write integration tests for completion provider
+- [x] Write integration tests for completion provider
 - [ ] Write integration tests for diagnostics
-- [ ] Test with real Rasa projects (small, medium, large)
 - [ ] Achieve 80% code coverage for core services
 
 ### Documentation
@@ -148,6 +147,7 @@
 - [ ] Add ESLint rules enforcement
 - [ ] Add Prettier for code formatting
 - [ ] Create issue templates for GitHub
+- [ ] Test with real Rasa projects (small, medium, large)
 
 ---
 
