@@ -1,0 +1,10 @@
+
+version: "3.1"
+
+stories:
+  - story: test undefined form
+    steps:
+      - intent: greet
+      - active_loop: undefined_form
+      - active_loop: null
+      - action: utter_greet

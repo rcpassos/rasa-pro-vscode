@@ -5,6 +5,7 @@ import {
   RasaDomain,
   ValidationError,
 } from "../services/yamlParserService";
+import { CrossFileValidationService } from "../services/crossFileValidationService";
 import * as path from "path";
 
 /**
@@ -17,11 +18,12 @@ export class RasaDiagnosticProvider implements vscode.Disposable {
   private outputChannel: vscode.OutputChannel;
   private fileWatcher: vscode.FileSystemWatcher | undefined;
   private disposables: vscode.Disposable[] = [];
-  private projectService: RasaProjectService;
+  private crossFileValidator: CrossFileValidationService;
+  private crossFileValidationEnabled: boolean = true;
 
   constructor(projectService: RasaProjectService) {
-    this.projectService = projectService;
     this.yamlParser = YamlParserService.getInstance();
+    this.crossFileValidator = new CrossFileValidationService(projectService);
     this.outputChannel = vscode.window.createOutputChannel("Rasa Diagnostics");
 
     // Create diagnostic collection
@@ -76,17 +78,152 @@ export class RasaDiagnosticProvider implements vscode.Disposable {
 
     this.fileWatcher.onDidChange((uri) => {
       this.validateFileByUri(uri);
+      // Trigger cross-file validation when any file changes
+      this.debouncedCrossFileValidation();
     });
 
     this.fileWatcher.onDidCreate((uri) => {
       this.validateFileByUri(uri);
+      // Trigger cross-file validation when any file is created
+      this.debouncedCrossFileValidation();
     });
 
     this.fileWatcher.onDidDelete((uri) => {
       this.diagnosticCollection.delete(uri);
+      // Trigger cross-file validation when any file is deleted
+      this.debouncedCrossFileValidation();
     });
 
     this.disposables.push(this.fileWatcher);
+  }
+
+  /**
+   * Debounced cross-file validation to avoid excessive re-validation
+   */
+  private crossFileValidationTimer: NodeJS.Timeout | undefined;
+  private debouncedCrossFileValidation(): void {
+    if (!this.crossFileValidationEnabled) {
+      return;
+    }
+
+    // Clear existing timer
+    if (this.crossFileValidationTimer) {
+      clearTimeout(this.crossFileValidationTimer);
+    }
+
+    // Set new timer - validate after 500ms of inactivity
+    this.crossFileValidationTimer = setTimeout(() => {
+      this.runCrossFileValidation();
+    }, 500);
+  }
+
+  /**
+   * Run cross-file validation on the entire project
+   */
+  private async runCrossFileValidation(): Promise<void> {
+    try {
+      this.log("Running cross-file validation...");
+
+      const issuesByFile = await this.crossFileValidator.validateProject();
+
+      // Add cross-file diagnostics to existing diagnostics for each file
+      for (const [filePath, issues] of issuesByFile.entries()) {
+        const uri = vscode.Uri.file(filePath);
+        const document = await vscode.workspace.openTextDocument(uri);
+
+        // Get existing diagnostics for this file
+        const existingDiagnostics = Array.from(
+          this.diagnosticCollection.get(uri) || []
+        );
+
+        // Convert cross-file issues to diagnostics
+        const crossFileDiagnostics = this.convertCrossFileIssuesToDiagnostics(
+          issues,
+          document
+        );
+
+        // Merge with existing diagnostics
+        const allDiagnostics = [
+          ...existingDiagnostics,
+          ...crossFileDiagnostics,
+        ];
+
+        this.diagnosticCollection.set(uri, allDiagnostics);
+      }
+
+      this.log("Cross-file validation complete");
+    } catch (error) {
+      this.log(
+        `Error during cross-file validation: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
+  }
+
+  /**
+   * Convert cross-file issues to VS Code diagnostics
+   */
+  private convertCrossFileIssuesToDiagnostics(
+    issues: any[],
+    document: vscode.TextDocument
+  ): vscode.Diagnostic[] {
+    return issues.map((issue) => {
+      // Try to find the location of the referenced item in the document
+      const range = this.findItemLocation(document, issue.itemName);
+
+      const diagnostic = new vscode.Diagnostic(
+        range || new vscode.Range(0, 0, 0, 0),
+        issue.message,
+        issue.severity
+      );
+      diagnostic.source = "Rasa (Cross-File)";
+      diagnostic.code = issue.type;
+
+      return diagnostic;
+    });
+  }
+
+  /**
+   * Try to find the location of an item (intent, action, slot, etc.) in the document
+   */
+  private findItemLocation(
+    document: vscode.TextDocument,
+    itemName: string
+  ): vscode.Range | undefined {
+    const text = document.getText();
+    const lines = text.split("\n");
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line) {
+        continue;
+      }
+
+      const index = line.indexOf(itemName);
+
+      if (index !== -1) {
+        // Check if this is likely the item definition/reference
+        // (not in a comment, and not part of another word)
+        const beforeChar = index > 0 ? line[index - 1] : " ";
+        const afterChar =
+          index + itemName.length < line.length
+            ? line[index + itemName.length]
+            : " ";
+
+        // Simple check: item should be surrounded by non-word characters
+        if (
+          beforeChar &&
+          afterChar &&
+          !/\w/.test(beforeChar) &&
+          !/\w/.test(afterChar)
+        ) {
+          return new vscode.Range(i, index, i, index + itemName.length);
+        }
+      }
+    }
+
+    return undefined;
   }
 
   /**
@@ -190,16 +327,8 @@ export class RasaDiagnosticProvider implements vscode.Disposable {
       const schemaErrors = await this.validateRasaSchema(document, content);
       diagnostics.push(...schemaErrors);
 
-      // 3. Validate cross-file references (if it's a domain file)
-      if (this.isDomainFile(document.uri.fsPath)) {
-        const crossFileErrors = await this.validateCrossFileReferences(
-          document,
-          content
-        );
-        diagnostics.push(...crossFileErrors);
-      }
-
-      // Set diagnostics for this document
+      // Set diagnostics for this document (without cross-file validation here)
+      // Cross-file validation is handled separately and debounced
       this.diagnosticCollection.set(document.uri, diagnostics);
 
       const errorCount = diagnostics.filter(
@@ -372,31 +501,6 @@ export class RasaDiagnosticProvider implements vscode.Disposable {
   }
 
   /**
-   * Validate cross-file references (detect undefined or unused components)
-   */
-  private async validateCrossFileReferences(
-    _document: vscode.TextDocument,
-    _content: string
-  ): Promise<vscode.Diagnostic[]> {
-    const diagnostics: vscode.Diagnostic[] = [];
-
-    // This is a placeholder for future implementation
-    // Will use this.projectService to:
-    // - Undefined intents referenced in stories/rules
-    // - Undefined entities
-    // - Undefined actions
-    // - Unused responses
-    // - Missing slot definitions
-
-    // For now, just ensure projectService is available for future use
-    if (!this.projectService) {
-      return diagnostics;
-    }
-
-    return diagnostics;
-  }
-
-  /**
    * Check if a file is a domain file
    */
   private isDomainFile(filePath: string): boolean {
@@ -442,6 +546,10 @@ export class RasaDiagnosticProvider implements vscode.Disposable {
    * Dispose of resources
    */
   public dispose(): void {
+    if (this.crossFileValidationTimer) {
+      clearTimeout(this.crossFileValidationTimer);
+    }
+    this.crossFileValidator.dispose();
     this.clearAll();
     this.disposables.forEach((d) => d.dispose());
     this.outputChannel.dispose();

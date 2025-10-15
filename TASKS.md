@@ -52,17 +52,21 @@
 
 ### Cross-File Validation
 
-- [ ] Detect undefined intents referenced in stories/rules
-- [ ] Detect unused intents in domain
-- [ ] Detect undefined actions
-- [ ] Detect unused responses
-- [ ] Detect missing slot definitions
+- [x] Detect undefined intents referenced in stories/rules
+- [x] Detect unused intents in domain
+- [x] Detect undefined actions
+- [x] Detect unused responses
+- [x] Detect missing slot definitions
+- [x] Detect undefined slots in stories/rules
+- [x] Detect undefined forms in stories/rules (active_loop)
+- [x] Handle built-in Rasa actions (action_listen, action_restart, etc.)
 
 ### Problems Panel Integration
 
-- [ ] Link errors to specific files and line numbers
-- [ ] Add quick-fix suggestions where possible
-- [ ] Support split domain files validation
+- [x] Link errors to specific files and line numbers
+- [x] Add quick-fix suggestions where possible (via diagnostic codes)
+- [x] Support split domain files validation
+- [x] Debounced validation to improve performance
 
 ---
 

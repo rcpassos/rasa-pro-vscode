@@ -1,0 +1,10 @@
+
+version: "3.1"
+
+stories:
+  - story: test undefined slot
+    steps:
+      - intent: greet
+      - slot_was_set:
+        - undefined_slot: true
+      - action: utter_greet

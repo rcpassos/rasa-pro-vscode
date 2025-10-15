@@ -1,0 +1,8 @@
+
+version: "3.1"
+
+rules:
+  - rule: test undefined intent in rule
+    steps:
+      - intent: undefined_rule_intent
+      - action: utter_greet

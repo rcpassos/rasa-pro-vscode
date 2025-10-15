@@ -1,6 +1,8 @@
 version: "3.1"
 
 intents:
+  - unused_intent_test
+  - unused_intent_test
   - greet
   - goodbye
   - affirm
@@ -14,6 +16,16 @@ entities:
   - location
 
 slots:
+  unused_slot_test:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+  unused_slot_test:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
   name:
     type: text
     influence_conversation: false
@@ -31,6 +43,10 @@ slots:
         entity: location
 
 responses:
+  utter_unused_test:
+    - text: "This is unused"
+  utter_unused_test:
+    - text: "This is unused"
   utter_greet:
     - text: "Hey! How are you?"
     - text: "Hello! How can I help you?"
